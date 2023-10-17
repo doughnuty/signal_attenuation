@@ -16,7 +16,7 @@ oled.poweron()
 
 def show_on_screen(s1, s2, s3):
     oled.fill(0)
-    oled.text(s1, 0, 0)
+    oled.text(str(s1), 0, 0)
     oled.text(s2, 0, 10)
     oled.text(s3, 0, 20)
     oled.show()
@@ -80,26 +80,23 @@ target_ID_Bytes = target_ID.to_bytes(1, "big")
 def handler(event):
     try:
         if event & SX1262.RX_DONE:
+            
             global recv_pkts                
             x, err = lora.recv()
-            if err != ERR_NONE:
+            if err != 0:
                 print('error: ', err)
                 return
-            if len(x) == 7:
+            print(x)
+            if len(x) > 0:
                 recv_pkts += 1
                 
                 ID, seq, CRC = struct.unpack("!BHI", x)
-                if ID != 255 or seq != recv_pkts:
-                    return
-                joined = b"".join([device_ID_bytes, seq.to_bytes(2, "big")])
-                our_CRC = crc32(joined)
-                if our_CRC != CRC:
-                    recv_pkts -= 1
-                    return
-                print('pkt #:', recv_pkts, ' received')
-                show_on_screen(str(recv_pkts), '', '')
+                print(ID, seq)
+                print('pkt #:', seq, ' received')
+                show_on_screen(str(seq), '', '')
                 rssi = lora.getRSSI()
-                my_print('pkt #:', recv_pkts)
+                my_print('pkt #:', seq)
+                print('pkt #:', seq)
                 my_print('rss:', rssi)
                 print('rss:', rssi)
         elif event & SX1262.TX_DONE:
@@ -114,7 +111,7 @@ lora.setBlockingCallback(False, handler)
 while 1:
     try:
         if recv_pkts >= 500:
-            return
+            continue
         time.sleep(0.5)
     except Exception as e:
         show_on_screen(oled, 'Error occured', '')
