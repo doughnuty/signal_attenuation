@@ -59,5 +59,6 @@ while pn < 500:
         show_on_screen(str(pn))
     except:
         continue
-    
+
 server_socket.close()
+send_packet(station, 666)
