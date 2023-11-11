@@ -22,9 +22,9 @@ bt = Bluetooth()
 bt.stop_scan()
 bt.start_scan(-1)
 
-
+err_count = 0
 i = -1 
-while i < 499:  
+while i < 499 and err_count < 4:  
   adv = bt.get_adv()
   if adv and bt.resolve_adv_data(adv.data, Bluetooth.ADV_NAME_CMPL) == 'FiPy 45':
       try:
@@ -38,12 +38,14 @@ while i < 499:
                       i = int.from_bytes(char.read(), 'little')
                       print('value = {}'.format(i))
                       f.write(str(i) + ' ' + str(adv.rssi) + '\n')
+                      err_count = 0
           conn.disconnect()
           bt.stop_scan()
           time.sleep(1)
           bt.start_scan(-1)
       except:
           print("Error while connecting or reading from the BLE device")
+          err_count = err_count + 1
           conn.disconnect()
           bt.stop_scan()
           time.sleep(2)
