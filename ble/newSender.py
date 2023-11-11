@@ -1,13 +1,8 @@
-
-
-
-
-
 from network import Bluetooth
 from machine import Timer
 import time
 
-battery = 100
+battery = 0
 update = False
 def conn_cb(chr):
     events = chr.events()
@@ -44,16 +39,16 @@ print('Start BLE service')
 def update_handler(update_alarm):
     global battery
     global update
-    battery-=1
-    if battery == 1:
-        battery = 100
+    battery+=1
+    if battery == 500:
+        battery = 0
     if update:
         chr1.value(str(battery))
 
-# update_alarm = Timer.Alarm(update_handler, 1, periodic=True)
+update_alarm = Timer.Alarm(update_handler, 1, periodic=True)
 
-i = 0
-while i < 500:
-    chr1.value(str(i))
-    time.sleep(2)
-    i+=1
+# i = 0
+# while i < 500:
+#     chr1.value(str(i))
+#     time.sleep(2)
+#     i+=1
