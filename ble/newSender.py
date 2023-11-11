@@ -1,5 +1,6 @@
 from network import Bluetooth
 from machine import Timer
+import struct
 import time
 
 battery = 0
@@ -43,6 +44,7 @@ def update_handler(update_alarm):
     if battery == 500:
         battery = 0
     if update:
+        
         chr1.value(str(battery))
 
 update_alarm = Timer.Alarm(update_handler, 1, periodic=True)
