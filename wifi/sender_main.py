@@ -1,10 +1,8 @@
-import network
+from network import WLAN
 import socket
 import ure
 import time
-import ssd1306
-from machine import SoftI2C, Pin
-
+import struct
 
 ap_ssid = "ClientAP"
 ap_password = "tayfunulu"
@@ -17,48 +15,27 @@ port = 80
 def send_packet(station, pn):
     station.sendall(str(pn))
     
-def show_on_screen(s1):
-    oled.fill(0)
-    oled.text(s1, 0, 0)
-    oled.show()
-    
-wlan_ap = network.WLAN(network.AP_IF)
+wlan_ap = WLAN()
+wlan_ap.init(mode=WLAN.AP, ssid=ap_ssid)
 
 addr = ('0.0.0.0', port)
-wlan_ap.active(True)
-
-wlan_ap.config(essid=ap_ssid, password=ap_password, authmode=ap_authmode)
 
 server_socket = socket.socket()
 server_socket.bind(addr)
 server_socket.listen(1)
 
-scl = Pin(18, Pin.OUT, Pin.PULL_UP)
-sda = Pin(17, Pin.OUT, Pin.PULL_UP)
-i2c = SoftI2C(scl=scl, sda=sda, freq=450000)
-print(i2c.scan())
-try:
-    oled = ssd1306.SSD1306_I2C(128, 64, i2c, addr=0x3c)
-    oled.poweron()
-except:
-    print("oled error")
-
 print('Connect to WiFi ssid ' + ap_ssid + ', default password: ' + ap_password)
 print('and access the ESP via your favorite web browser at 192.168.4.1.')
 print('Listening on:', addr)
 
-pn = 0
+pn = 250
 station, addr = server_socket.accept()
 print('station connected from ', addr)
 
 while pn < 500:
     send_packet(station, pn)
-    print('packet sent: ',pn)
+    time.sleep(3)
+    print('packet sent: ', pn)
     pn = pn + 1
-    try:
-        show_on_screen(str(pn))
-    except:
-        continue
 
 server_socket.close()
-send_packet(station, 666)
