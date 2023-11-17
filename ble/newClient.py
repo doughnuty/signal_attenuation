@@ -27,8 +27,8 @@ i = -1
 while i < 499 and err_count < 4:  
   adv = bt.get_adv()
   if adv and bt.resolve_adv_data(adv.data, Bluetooth.ADV_NAME_CMPL) == 'FiPy 45':
+      conn = bt.connect(adv.mac)
       try:
-          conn = bt.connect(adv.mac)
           services = conn.services()
           for service in services:
               time.sleep(0.050)
