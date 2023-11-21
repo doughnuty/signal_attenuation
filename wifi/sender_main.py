@@ -28,7 +28,7 @@ print('Connect to WiFi ssid ' + ap_ssid + ', default password: ' + ap_password)
 print('and access the ESP via your favorite web browser at 192.168.4.1.')
 print('Listening on:', addr)
 
-pn = 250
+pn = 0
 station, addr = server_socket.accept()
 print('station connected from ', addr)
 
