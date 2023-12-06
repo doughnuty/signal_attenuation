@@ -4,17 +4,25 @@ import uos
 import time
 from machine import SD
 import os
+import pycom
 
 def mount_sd_card():
+    contype = 'WiFi-'
     sd = SD()
     os.mount(sd, '/sd')
     os.listdir('/sd')
 
     random = uos.urandom(4)
-    result_str = str(int.from_bytes(random, 'big'))
+    result_str =str(int.from_bytes(random, 'big'))
     print(result_str)
 
-    return open('/sd/' + result_str + '.csv', 'a')
+    return open('/sd/' + contype + result_str + '.csv', 'a')
+
+
+pycom.heartbeat(False)
+
+# yellow for preparing
+pycom.rgbled(0x7f7f00) # yellow
 
 f = mount_sd_card()
 
@@ -52,7 +60,12 @@ try:
     s.connect(('192.168.4.1', 80))
 except Exception as err:
     print(err)
+    # light pink for error
+    pycom.rgbled(0xfe347e) # pink
     
+# light red for sending
+pycom.rgbled(0x7f0000) # red
+
 data = '-1'
 while data != b'499':
     try:
@@ -64,6 +77,15 @@ while data != b'499':
                 f.write(data.decode("utf-8") + ' ' + str(x[4]) + '\n')
     except Exception as err:
         print(err)
+        # light pink for error
+        pycom.rgbled(0xfe347e) # pink
         time.sleep(2)
+        
 f.close()
 s.close()
+
+# light green for ready
+pycom.rgbled(0x007f00) # green
+
+while(True):
+    time.sleep(10)
