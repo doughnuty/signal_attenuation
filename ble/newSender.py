@@ -47,10 +47,4 @@ def update_handler(update_alarm):
         
         chr1.value(str(battery))
 
-update_alarm = Timer.Alarm(update_handler, 4, periodic=True)
-
-# i = 0
-# while i < 500:
-#     chr1.value(str(i))
-#     time.sleep(2)
-#     i+=1
+update_alarm = Timer.Alarm(update_handler, 2, periodic=True)
