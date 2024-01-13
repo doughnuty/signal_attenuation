@@ -1,3 +1,5 @@
+# main.py -- put your code here!
+import pycom
 import time
 from network import Bluetooth
 import binascii
@@ -36,8 +38,8 @@ pycom.rgbled(0x7f0000) # red
 while i < 499 and err_count < 4:  
   adv = bt.get_adv()
   if adv and bt.resolve_adv_data(adv.data, Bluetooth.ADV_NAME_CMPL) == 'FiPy 45':
-      conn = bt.connect(adv.mac)
       try:
+          conn = bt.connect(adv.mac)
           services = conn.services()
           for service in services:
               time.sleep(0.050)
@@ -45,7 +47,7 @@ while i < 499 and err_count < 4:
               for char in chars:
                   if (char.properties() & Bluetooth.PROP_READ) and char.uuid() == 60430:
                       i = int.from_bytes(char.read(), 'little')
-                      print('value = {}'.format(i))
+                      print('value = {} rssi = {}'.format(i, adv.rssi))
                       f.write(str(i) + ' ' + str(adv.rssi) + '\n')
                       err_count = 0
           conn.disconnect()
