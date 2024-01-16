@@ -34,8 +34,8 @@ err_count = 0
 i = -1
 # light red for sending
 pycom.rgbled(0x7f0000) # red
-
-while i < 499 and err_count < 4:  
+conn = 0
+while i < 99 and err_count < 4:  
   adv = bt.get_adv()
   if adv and bt.resolve_adv_data(adv.data, Bluetooth.ADV_NAME_CMPL) == 'FiPy 45':
       try:
@@ -58,7 +58,8 @@ while i < 499 and err_count < 4:
           print("Error while connecting or reading from the BLE device")
           pycom.rgbled(0xfe347e) # pink
           err_count = err_count + 1
-          conn.disconnect()
+          if conn:
+              conn.disconnect()
           bt.stop_scan()
           time.sleep(2)
           bt.start_scan(-1)
