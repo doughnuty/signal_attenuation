@@ -2,7 +2,7 @@ from network import LoRa
 import socket
 import time
 import struct
-
+import pycom
 from machine import SD
 import os
 
@@ -30,10 +30,10 @@ f = open('/sd/' + contype + today_str + '.csv', 'a')
 
 i = 0
 j = 0
-
+dict_ = {}
 # light red for sending
 pycom.rgbled(0x7f0000) # red
-while i < 500:
+while i != 399:
     rcv = s.recv(4)
     if rcv:
         try:
@@ -43,13 +43,13 @@ while i < 500:
             continue
             # light pink for error
             pycom.rgbled(0xfe347e) # pink
-    
         st = lora.stats()
         print(packets[0], ' ', st[1])
-        f.write(str(packets[0]) + ' ' + str(st[1]) + '\n')
         time.sleep(5)
         i = packets[0]
-        j = j + 1
+        dict_[i] = st[1]
+for key, val in dict_.items():
+    f.write(str(key) + ' ' + str(val) + '\n')
 f.close()
 
 # light green for ready

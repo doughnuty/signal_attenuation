@@ -86,6 +86,3 @@ s.close()
 
 # light green for ready
 pycom.rgbled(0x007f00) # green
-
-while(True):
-    time.sleep(10)
